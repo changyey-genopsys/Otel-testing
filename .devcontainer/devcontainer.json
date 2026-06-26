@@ -1,0 +1,17 @@
+{
+  "name": "typescript-otel",
+
+  "dockerComposeFile": "../docker-compose.yml",
+
+  "service": "app",
+
+  "workspaceFolder": "/workspace",
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    }
+  },
+
+  "postCreateCommand": "corepack enable && pnpm install"
+}
