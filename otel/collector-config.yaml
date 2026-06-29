@@ -17,15 +17,21 @@ exporters:
   debug:
     verbosity: detailed
 
-  elasticsearch/logs:
+  elasticsearch:
     endpoints:
       - http://elasticsearch:9200
-    mode: data_stream 
+    mapping:
+      mode: otel
 
-  elasticsearch/traces:
-    endpoints:
-      - http://elasticsearch:9200
-    mode: data_stream 
+    logs_dynamic_index:
+      enabled: true
+
+    metrics_dynamic_index:
+      enabled: true
+
+    traces_dynamic_index:
+      enabled: true
+
 
 service:
   pipelines:
@@ -37,7 +43,7 @@ service:
         - memory_limiter
         - batch
 
-      exporters: [elasticsearch/logs, debug]
+      exporters: [elasticsearch, debug]
         # - elasticsearch/logs
 
     traces:
@@ -48,5 +54,5 @@ service:
         - memory_limiter
         - batch
 
-      exporters: [elasticsearch/traces, debug]
+      exporters: [elasticsearch, debug]
         # - elasticsearch/traces

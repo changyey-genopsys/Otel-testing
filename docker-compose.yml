@@ -44,6 +44,8 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - action.auto_create_index=true
+
     mem_limit: 2GB
     ports:
       - "9200:9200"
