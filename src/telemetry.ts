@@ -17,7 +17,7 @@ import {
 const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]:
-      "typescript-backend",
+      "ts-app",
 
     [ATTR_SERVICE_VERSION]:
       "1.0.0",

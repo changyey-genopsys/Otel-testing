@@ -17,4 +17,11 @@ async function bootstrap() {
   });
 }
 
-bootstrap();
+await bootstrap();
+
+logger.info(
+  {
+    test: true,
+  },
+  "OTEL_TEST"
+);
