@@ -17,9 +17,9 @@ app.get("/health", (_req, res) => {
   });
 });
 
-const intervalId = setInterval(() => {
-  logger.info("This message repeats every 3 seconds." + String(Date.now()));
-}, 3000);
+// const intervalId = setInterval(() => {
+//   logger.info("This message repeats every 3 seconds." + String(Date.now()));
+// }, 3000);
 
 
 export default app;

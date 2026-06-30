@@ -49,7 +49,7 @@ import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 const logExporter = new OTLPLogExporter({
-  url: 'http://otel-collector:4318/v1/logs', 
+  url: 'http://otel-collector:4318/v1/logs',
 });
 
 const loggerProvider = new LoggerProvider({
@@ -87,10 +87,8 @@ function emitToOpenTelemetry(args: any[]) {
 
   }
 
-  const span =
-    trace.getSpan(context.active());
-
-  // const ctx = span?.spanContext();
+  const span = trace.getSpan(context.active());
+  const ctx = span?.spanContext();
   const customContext = context.active();
   otelLogger.emit({
 
@@ -148,4 +146,17 @@ export const logger = pino({
 });
 
 
-logger.info("test")
+// logger.info("test")
+
+
+// const ctx = context.active();
+
+// console.log("Context:", ctx);
+
+// const span = trace.getSpan(ctx);
+
+// console.log("Span:", span);
+
+// if (span) {
+//     console.log("SpanContext:", span.spanContext());
+// }

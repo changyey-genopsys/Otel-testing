@@ -1,10 +1,10 @@
+import { startTelemetry } from "./telemetry.js";
+await startTelemetry();
+
 import app from "./app.js";
 import { logger } from "./logger.js";
-import { startTelemetry } from "./telemetry.js";
 
 async function bootstrap() {
-
-  await startTelemetry();
 
   app.listen(3000, () => {
 
@@ -19,9 +19,6 @@ async function bootstrap() {
 
 await bootstrap();
 
-logger.info(
-  {
-    test: true,
-  },
-  "OTEL_TEST"
-);
+process.on('SIGINT', function () {
+  process.exit();
+});
