@@ -31,7 +31,6 @@ const sdk = new NodeSDK({
   ],
 });
 
-
 export async function startTelemetry() {
   await sdk.start();
 }

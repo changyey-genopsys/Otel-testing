@@ -23,22 +23,22 @@ app.get("/health", async (_req, res) => {
 
     await service("health Test");
 
-    // manual trace test2
-    const childspan = tracer.startSpan("db");
-
-    const ctx =
-      trace.setSpan(
-        context.active(),
-        childspan
-      );
-
-    context.with(ctx, () => {
-      logger.info("hello");
-    });
-
     span.end();
 
   });
+  
+  // manual trace test2
+  // const childspan = tracer.startSpan("db");
+
+  // const ctx =
+  //   trace.setSpan(
+  //     context.active(),
+  //     childspan
+  //   );
+
+  // context.with(ctx, () => {
+  //   logger.info("hello");
+  // });
 
   res.json({
     status: "ok",
@@ -48,10 +48,5 @@ app.get("/health", async (_req, res) => {
 async function service(args: String) {
   logger.info(args);
 }
-
-// const intervalId = setInterval(() => {
-//   logger.info("This message repeats every 3 seconds." + String(Date.now()));
-// }, 3000);
-
 
 export default app;

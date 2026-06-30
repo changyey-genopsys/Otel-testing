@@ -12,6 +12,7 @@ import {
   ConsoleLogRecordExporter,
   SimpleLogRecordProcessor,
   BatchLogRecordProcessor,
+  createLoggerConfigurator 
 } from '@opentelemetry/sdk-logs';
 
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
@@ -54,6 +55,14 @@ const loggerProvider = new LoggerProvider({
     [ATTR_SERVICE_NAME]: "ts-app",
     [ATTR_SERVICE_VERSION]: "1.0.0",
   }),
+  loggerConfigurator: createLoggerConfigurator([
+    {
+      pattern: '*', // Match all loggers
+      config: {
+        minimumSeverity: SeverityNumber.DEBUG, // Only DEBUG, INFO, WARN, ERROR, and FATAL logs
+      }
+    }
+  ]),
   processors: [
     new BatchLogRecordProcessor(logExporter),
     // new SimpleLogRecordProcessor(new ConsoleLogRecordExporter()) // use for console testing

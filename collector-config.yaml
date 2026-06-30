@@ -12,8 +12,6 @@ processors:
     check_interval: 1s
 
   batch:
-
-  resource:
   
 exporters:
   debug:
