@@ -24,32 +24,22 @@ import {
 } from "@opentelemetry/semantic-conventions";
 
 // export function toSeverity(level: number) {
-
 //   switch (level) {
-
 //     case 10:
 //       return SeverityNumber.TRACE;
-
 //     case 20:
 //       return SeverityNumber.DEBUG;
-
 //     case 30:
 //       return SeverityNumber.INFO;
-
 //     case 40:
 //       return SeverityNumber.WARN;
-
 //     case 50:
 //       return SeverityNumber.ERROR;
-
 //     case 60:
 //       return SeverityNumber.FATAL;
-
 //     default:
 //       return SeverityNumber.UNSPECIFIED;
-
 //   }
-
 // }
 
 // Optional and only needed to see the internal diagnostic logging (during development)
@@ -78,67 +68,49 @@ logs.setGlobalLoggerProvider(loggerProvider);
 export const otelLogger = logs.getLogger('example', '1.0.0');
 
 function emitToOpenTelemetry(args: any[]) {
-
   let message = "";
-
   let attributes = {};
 
   if (typeof args[0] === "string") {
-
     message = args[0];
-
   }
 
   else {
-
     attributes = args[0];
-
     message = args[1];
-
   }
 
   // const span = trace.getSpan(context.active());
   // const ctx = span?.spanContext();
   const customContext = context.active();
   otelLogger.emit({
-
-    severityNumber:
-      SeverityNumber.INFO,
-
-    severityText:
-      "INFO",
-
-    body:
-      message,
-
+    severityNumber: SeverityNumber.INFO,
+    severityText: "INFO",
+    body: message,
     attributes,
-
     context: customContext
-
   });
-
 }
 
 // If only use logger no initial telemetry, then it will lost span_id and trace_id
 export const logger = pino({
   level: "info",
 
-  // if called from http route function, trace_id and span_id will duplicate in otelLogger
-  mixin() {
-    const span =
-      trace.getSpan(context.active());
+  // mixin() {
+  //   const span =
+  //     trace.getSpan(context.active());
 
-    if (!span) {
-      return {};
-    }
+  //   if (!span) {
+  //     return {};
+  //   }
 
-    const ctx = span.spanContext();
+  //   const ctx = span.spanContext();
 
-    return {
-      trace_id: ctx.traceId,
-      span_id: ctx.spanId,
-    };
-  },
+  //   return {
+  //     trace_id: ctx.traceId,
+  //     span_id: ctx.spanId,
+  //   };
+  // },
 
   hooks: {
     logMethod(args, method) {
