@@ -1,5 +1,5 @@
-import { logger } from "./logger/logger.js";
-import app from "./app.js";
+import { logger } from "./logger/logger.ts";
+import app from "./app.ts";
 
 async function bootstrap() {
 
