@@ -45,13 +45,13 @@ export class ElasticBulkBuffer {
 
             for (const log of logs) {
                 operations.push({
-                    index: {
-                        _index: this.index
+                    create: {
+                        _index: "logs-ts-app-default"
                     }
                 });
                 operations.push(log);
             }
-            await this.client.bulk({
+            const res = await this.client.bulk({
                 refresh: false,
                 operations
             });

@@ -6,9 +6,12 @@ const elasticClient = new Client({
   node: "http://elasticsearch:9200"
 })
 
+const INDEX = "app-log";
+const DATA_STREAM = "logs-ts-app-default";
+
 const buffer = new ElasticBulkBuffer({
   client: elasticClient,
-  index: "application-log"
+  index: DATA_STREAM
 });
 
 
