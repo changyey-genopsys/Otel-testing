@@ -1,6 +1,6 @@
 import express, { type Express } from 'express';
 
-import { logger } from "./logger.js";
+import { logger } from "./logger/logger.js";
 
 const app: Express = express();
 
