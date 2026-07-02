@@ -1,13 +1,13 @@
 import build from "pino-abstract-transport";
 import { Client } from '@elastic/elasticsearch'
-import { ElasticBulkBuffer } from "./elastic.bulk.buffer.ts"
+import { ElasticBulkBuffer, DATA_STREAM } from "./elastic.bulk.buffer.ts"
 
 const elasticClient = new Client({
   node: "http://elasticsearch:9200"
 })
 
 const INDEX = "app-log";
-const DATA_STREAM = "logs-ts-app-default";
+// const DATA_STREAM = "logs-ts-app-default";
 
 const buffer = new ElasticBulkBuffer({
   client: elasticClient,

@@ -12,7 +12,51 @@ app.get("/health", async (_req, res) => {
     "Health Check"
   );
   service("testing");
-  
+
+  res.json({
+    status: "ok",
+  });
+});
+
+
+import { Client } from "@elastic/elasticsearch";
+import { LogSearchService, } from "./logger/elastic.search.ts"
+import { type SearchRequest } from "./logger/query.builder.ts"
+
+const DATA_STREAM = "logs-ts-app-default";
+
+export const elasticClient = new Client({
+  node: "http://elasticsearch:9200",
+});
+
+
+
+app.get("/searchtt", async (_req, res) => {
+  const result = await elasticClient.search({
+    index: DATA_STREAM,
+    query: {
+      match: {
+        level: 30
+      }
+    }
+  });
+
+  console.log(result.hits.hits);
+  res.json({
+    status: "ok",
+  });
+});
+
+
+app.get("/search", async (_req, res) => {
+  const options: SearchRequest = {
+    keyword: "test"
+  };
+
+  const result = await new LogSearchService().search(DATA_STREAM, options);
+
+  console.log(result);
+  console.log(result.hits);
   res.json({
     status: "ok",
   });
