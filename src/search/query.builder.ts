@@ -1,7 +1,14 @@
 import * as esb from "elastic-builder";
+import { EcsFields, SearchFields } from "./search.field.ts"
+
+export interface KeywordSearch {
+    field: string;
+    keyword: string;
+}
 
 export interface SearchRequest {
-    keyword?: string;
+    keywordSearches?: KeywordSearch[];
+
     startTime?: Date;
     endTime?: Date;
 
@@ -21,33 +28,35 @@ export interface SearchRequest {
 
 export class QueryBuilder {
 
+    private buildKeyword(
+        bool: esb.BoolQuery,
+        request: SearchRequest
+    ): void {
+        if (!request.keywordSearches?.length) {
+            return;
+        }
+
+        for (const item of request.keywordSearches) {
+            bool.must(esb.matchQuery(
+                item.field,
+                item.keyword
+            ));
+        }
+    }
+
     build(request: SearchRequest): object {
         const bool = esb.boolQuery();
 
         //------------------------------------
         // Keyword
         //------------------------------------
-        if (request.keyword) {
-            bool.must(
-                esb.multiMatchQuery(
-                    [
-                        "message",
-                        "service.name",
-                        "host.name",
-                        "trace.id"
-                    ],
-                    request.keyword
-                )
-                    .type("best_fields")
-                    .operator("and")
-            );
-        }
-
+        this.buildKeyword(bool, request);
+       
         //------------------------------------
         // Time Range
         //------------------------------------
         if (request.startTime || request.endTime) {
-            const range = esb.rangeQuery("@timestamp");
+            const range = esb.rangeQuery(EcsFields.timestamp);
             if (request.startTime) {
                 range.gte(
                     request.startTime.toISOString()
@@ -62,24 +71,24 @@ export class QueryBuilder {
         }
 
         //------------------------------------
-        // level
+        // level !ECS
         //------------------------------------
         if (request.level?.length) {
             bool.filter(
                 esb.termsQuery(
-                    "log.level",
+                    EcsFields.level,
                     request.level
                 )
             );
         }
 
         //------------------------------------
-        // service
+        // service !ECS
         //------------------------------------
         if (request.service?.length) {
             bool.filter(
                 esb.termsQuery(
-                    "service.name",
+                    EcsFields.serviceName,
                     request.service
                 )
             );
@@ -91,7 +100,7 @@ export class QueryBuilder {
         if (request.host?.length) {
             bool.filter(
                 esb.termsQuery(
-                    "host.name",
+                    EcsFields.hostName,
                     request.host
                 )
             );
@@ -103,7 +112,7 @@ export class QueryBuilder {
         if (request.traceId) {
             bool.filter(
                 esb.termQuery(
-                    "trace.id",
+                    EcsFields.traceId,
                     request.traceId
                 )
             );
@@ -115,7 +124,7 @@ export class QueryBuilder {
         if (request.spanId) {
             bool.filter(
                 esb.termQuery(
-                    "span.id",
+                    EcsFields.spanId,
                     request.spanId
                 )
             );
@@ -131,7 +140,8 @@ export class QueryBuilder {
         // source
         //------------------------------------
         if (request.fields?.length) {
-            body.source(request.fields);
+            body.source(request.fields ??
+                SearchFields.defaultSource);
         }
 
         //------------------------------------
@@ -155,6 +165,8 @@ export class QueryBuilder {
         // total hits
         //------------------------------------
         body.trackTotalHits(true);
+        // console.log(body.toJSON().query)
+        // console.log(body.toJSON().query.bool)
         return body.toJSON();
     }
 }
