@@ -4,6 +4,14 @@ import { EcsFields, SearchFields } from "./search.field.ts"
 export interface KeywordSearch {
     field: string;
     keyword: string;
+    searchMode?: "fullText" | "exact";
+    searchOptions?: {
+        operator?: "and" | "or";
+        fuzziness?: "AUTO" | number;
+        boost?: number;
+        minimumShouldMatch?: string;
+    };
+
 }
 
 export interface SearchRequest {
@@ -28,30 +36,61 @@ export interface SearchRequest {
 
 export class QueryBuilder {
 
-    private buildKeyword(
-        bool: esb.BoolQuery,
-        request: SearchRequest
-    ): void {
-        if (!request.keywordSearches?.length) {
-            return;
+    private buildCondition(condition: KeywordSearch): esb.Query {
+        switch (condition.searchMode) {
+            case "fullText": {
+                const query = esb.matchQuery(
+                    condition.field,
+                    condition.keyword
+                );
+
+                const options = condition.searchOptions;
+
+                if (options) {
+                    if (options.operator) {
+                        query.operator(options.operator);
+                    }
+
+                    if (options.fuzziness !== undefined) {
+                        query.fuzziness(options.fuzziness);
+                    }
+
+                    if (options.minimumShouldMatch) {
+                        query.minimumShouldMatch(
+                            options.minimumShouldMatch
+                        );
+                    }
+
+                    if (options.boost !== undefined) {
+                        query.boost(options.boost);
+                    }
+                }
+
+                return query;
+            }
+
+            case "exact":
+            default:
+                return esb.termQuery(
+                    condition.field,
+                    condition.keyword
+                );
         }
 
-        for (const item of request.keywordSearches) {
-            bool.must(esb.matchQuery(
-                item.field,
-                item.keyword
-            ));
-        }
     }
 
-    build(request: SearchRequest): object {
+    public build(request: SearchRequest): object {
         const bool = esb.boolQuery();
 
         //------------------------------------
-        // Keyword
+        // Keyword or full-text search
         //------------------------------------
-        this.buildKeyword(bool, request);
-       
+        if (request.keywordSearches?.length) {
+            for (const item of request.keywordSearches) {
+                bool.must(this.buildCondition(item));
+            }
+        }
+
         //------------------------------------
         // Time Range
         //------------------------------------
@@ -166,7 +205,8 @@ export class QueryBuilder {
         //------------------------------------
         body.trackTotalHits(true);
         // console.log(body.toJSON().query)
-        // console.log(body.toJSON().query.bool)
-        return body.toJSON();
+        // console.log(body.toJSON().query.bool.must)
+        console.log(esb.requestBodySearch().query(bool));
+        return esb.requestBodySearch().query(bool).toJSON();
     }
 }
