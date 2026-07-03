@@ -49,16 +49,17 @@ export const elasticClient = new Client({
 
 app.get("/search", async (_req, res) => {
   const options: SearchRequest = {
-    keywordSearches:[{
-        field: "level",
-        keyword: "30",
+    keywordSearches: [{
+      field: "msg",
+      keyword: "server",
+      searchMode: "fullText"
     }]
   };
 
   const result = await new LogSearchService().search(DATA_STREAM, options);
 
   console.log(result);
-  // console.log(result.hits);
+  // console.log(result.hits.hits);
   res.json({
     status: "ok",
   });

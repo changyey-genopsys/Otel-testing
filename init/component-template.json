@@ -1,0 +1,38 @@
+{
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "message": {
+          "type": "text"
+        },
+        "trace_id": {
+          "type": "keyword"
+        },
+        "span_id": {
+          "type": "keyword"
+        },
+        "service": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            }
+          }
+        },
+        "msg":{
+            "type": "text"
+        }
+      }
+    }
+  }
+}
