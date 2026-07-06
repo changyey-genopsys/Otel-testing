@@ -27,6 +27,10 @@ export interface SearchRequest {
     spanId?: string;
 
     host?: string[];
+
+    /** 
+    * elasticsearch return field.
+    */
     fields?: string[];
     sortField?: string;
     sortOrder?: "asc" | "desc";
@@ -178,10 +182,7 @@ export class QueryBuilder {
         //------------------------------------
         // source
         //------------------------------------
-        if (request.fields?.length) {
-            body.source(request.fields ??
-                SearchFields.defaultSource);
-        }
+        body.source(request.fields ?? SearchFields.defaultSource);
 
         //------------------------------------
         // paging
@@ -206,7 +207,7 @@ export class QueryBuilder {
         body.trackTotalHits(true);
         // console.log(body.toJSON().query)
         // console.log(body.toJSON().query.bool.must)
-        console.log(esb.requestBodySearch().query(bool));
-        return esb.requestBodySearch().query(bool).toJSON();
+        console.log(body.query(bool).toJSON());
+        return body.query(bool).toJSON();
     }
 }

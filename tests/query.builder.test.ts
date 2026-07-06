@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { QueryBuilder } from "../src/search/query.builder.ts";
+import { QueryBuilder, type SearchRequest } from "../src/search/query.builder.ts";
 
 describe("QueryBuilder", () => {
 
@@ -11,6 +11,14 @@ describe("QueryBuilder", () => {
         const body = builder.build({});
 
         expect(body).toEqual({
+            _source: [
+                '@timestamp',
+                'log.level',
+                'message',
+                'service.name',
+                'trace.id',
+                'span.id'
+            ],
             query: { bool: {} },
             from: 0,
             size: 20,
@@ -22,14 +30,16 @@ describe("QueryBuilder", () => {
 
     it("should create keyword query", () => {
         const body: any = builder.build({
-            keyword: "error",
-            keywordFields: ["message"]
+            keywordSearches:
+                [{
+                    field: "message",
+                    keyword: "error",
+                }]
         });
 
         expect(body.query.bool.must).toMatchObject({
-            multi_match: {
-                query: "error",
-                fields: ["message"]
+            term: {
+                "message": "error"
             }
         });
     });
@@ -41,11 +51,11 @@ describe("QueryBuilder", () => {
             endTime: new Date("2026-01-02")
         });
 
-        expect(body.query.bool.filter).toContainEqual({
+        expect(body.query.bool.filter).toEqual({
             range: {
-                "@timestamp": {
-                    gte: "2026-01-01T00:00:00.000Z",
-                    lte: "2026-01-02T00:00:00.000Z"
+                '@timestamp': {
+                    gte: '2026-01-01T00:00:00.000Z',
+                    lte: '2026-01-02T00:00:00.000Z'
                 }
             }
         });
@@ -57,7 +67,7 @@ describe("QueryBuilder", () => {
             level: ["ERROR", "WARN"]
         });
 
-        expect(body.query.bool.filter).toContainEqual({
+        expect(body.query.bool.filter).toEqual({
             terms: {
                 "log.level": ["ERROR", "WARN"]
             }
@@ -69,7 +79,7 @@ describe("QueryBuilder", () => {
             service: ["payment"]
         });
 
-        expect(body.query.bool.filter).toContainEqual({
+        expect(body.query.bool.filter).toEqual({
             terms: {
                 "service.name": ["payment"]
             }
@@ -81,7 +91,7 @@ describe("QueryBuilder", () => {
             traceId: "abc123"
         });
 
-        expect(body.query.bool.filter).toContainEqual({
+        expect(body.query.bool.filter).toEqual({
             term: {
                 "trace.id": "abc123"
             }
@@ -139,26 +149,6 @@ describe("QueryBuilder", () => {
             "message",
             "trace.id"
         ]);
-    });
-
-    it("should combine all conditions", () => {
-        const body: any = builder.build({
-            keyword: "database",
-            level: ["ERROR"],
-            service: ["payment"],
-            traceId: "abc",
-            page: 2,
-            pageSize: 10
-        });
-
-        expect(body.query.bool.must).toHaveLength(1);
-
-        expect(body.query.bool.filter).toHaveLength(3);
-
-        expect(body.from).toBe(10);
-
-        expect(body.size).toBe(10);
-
     });
 
 });

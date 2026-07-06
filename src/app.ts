@@ -51,8 +51,8 @@ app.get("/search", async (_req, res) => {
   const options: SearchRequest = {
     keywordSearches: [{
       field: "msg",
-      keyword: "server",
-      searchMode: "fullText"
+      keyword: "Server",
+      searchMode: "exact"
     }]
   };
 
