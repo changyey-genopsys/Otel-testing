@@ -1,42 +1,7 @@
 import * as esb from "elastic-builder";
-import { EcsFields, SearchFields } from "./search.field.ts"
+import { EcsFields, SearchFields , type KeywordSearch, type SearchRequest} from "./search.type.ts"
 
-export interface KeywordSearch {
-    field: string;
-    keyword: string;
-    searchMode?: "fullText" | "exact";
-    searchOptions?: {
-        operator?: "and" | "or";
-        fuzziness?: "AUTO" | number;
-        boost?: number;
-        minimumShouldMatch?: string;
-    };
 
-}
-
-export interface SearchRequest {
-    keywordSearches?: KeywordSearch[];
-
-    startTime?: Date;
-    endTime?: Date;
-
-    level?: string[];
-    service?: string[];
-
-    traceId?: string;
-    spanId?: string;
-
-    host?: string[];
-
-    /** 
-    * elasticsearch return field.
-    */
-    fields?: string[];
-    sortField?: string;
-    sortOrder?: "asc" | "desc";
-    page?: number;
-    pageSize?: number;
-}
 
 export class QueryBuilder {
 

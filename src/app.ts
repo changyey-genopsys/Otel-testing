@@ -20,7 +20,7 @@ app.get("/health", async (_req, res) => {
 
 import { Client } from "@elastic/elasticsearch";
 import { LogSearchService, } from "./search/elastic.search.ts"
-import { type SearchRequest } from "./search/query.builder.ts"
+import { type SearchRequest } from "./search/search.type.ts"
 
 const DATA_STREAM = "logs-ts-app-default";
 

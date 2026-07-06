@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { QueryBuilder, type SearchRequest } from "../src/search/query.builder.ts";
+import { QueryBuilder } from "../src/search/query.builder.ts";
 
 describe("QueryBuilder", () => {
 
