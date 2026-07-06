@@ -1,5 +1,6 @@
 import { Client } from "@elastic/elasticsearch";
-import { QueryBuilder, type SearchRequest } from "./query.builder.ts";
+import { QueryBuilder } from "./query.builder.ts";
+import { type SearchRequest } from "./search.type.ts"
 
 const elasticClient = new Client({
     node: "http://elasticsearch:9200",

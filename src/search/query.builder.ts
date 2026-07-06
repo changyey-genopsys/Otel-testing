@@ -1,7 +1,5 @@
 import * as esb from "elastic-builder";
-import { EcsFields, SearchFields , type KeywordSearch, type SearchRequest} from "./search.type.ts"
-
-
+import { EcsFields, SearchFields, type KeywordSearch, type SearchRequest } from "./search.type.ts"
 
 export class QueryBuilder {
 
