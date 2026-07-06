@@ -5,12 +5,15 @@ services:
 
     container_name: ts-app
     volumes:
-      - .:/workspace:cached
+      - ..:/workspace:cached
 
     command: "sleep infinity"
 
     ports:
       - "3000:3000"
+
+    env_file:
+      - .env
 
     depends_on:
       - elasticsearch
@@ -50,7 +53,7 @@ services:
 
     # mem_limit: 2GB
     ports:
-      - "9200:9200"
+      - "${ES_PORT}:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
       - ./init:/init
@@ -89,7 +92,7 @@ services:
 
     container_name: kibana
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://${ES_HOST}:${ES_PORT}
     # mem_limit: 1GB
     ports:
       - "5601:5601"
