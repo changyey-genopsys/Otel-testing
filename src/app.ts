@@ -52,14 +52,18 @@ app.get("/search", async (_req, res) => {
     keywordSearches: [{
       field: "msg",
       keyword: "Server",
-      searchMode: "exact"
-    }]
+      searchMode: "fullText"
+    }],
+    filters: [{ field: "level", value: "30" }],
+    fields: ['@timestamp', "msg", "hostname"],
+    startTime: new Date('2026-07-06T00:00:00.000Z',),
+    endTime: new Date()
   };
 
   const result = await new LogSearchService().search(DATA_STREAM, options);
 
   console.log(result);
-  // console.log(result.hits.hits);
+  console.log(result.hits.hits);
   res.json({
     status: "ok",
   });

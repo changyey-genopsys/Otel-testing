@@ -16,23 +16,35 @@ export const EcsFields = {
 } as const;
 
 
-export const SearchFields = {
-    defaultKeyword: [
-        EcsFields.message,
-        EcsFields.serviceName,
-        EcsFields.hostName,
-        EcsFields.traceId,
-    ],
+// export const SearchFields = {
+//     defaultKeyword: [
+//         EcsFields.message,
+//         EcsFields.serviceName,
+//         EcsFields.hostName,
+//         EcsFields.traceId,
+//     ],
 
-    defaultSource: [
-        EcsFields.timestamp,
-        EcsFields.level,
-        EcsFields.message,
-        EcsFields.serviceName,
-        EcsFields.traceId,
-        EcsFields.spanId,
-    ],
-} as const;
+//     defaultSource: [
+//         EcsFields.timestamp,
+//         EcsFields.level,
+//         EcsFields.message,
+//         EcsFields.serviceName,
+//         EcsFields.traceId,
+//         EcsFields.spanId,
+//     ],
+// } as const;
+
+export type FilterOperator =
+  | "eq"
+  | "neq"
+  | "gt"
+  | "gte"
+  | "lt"
+  | "lte"
+  | "in"
+  | "notIn"
+  | "exists"
+  | "notExists";
 
 export interface KeywordSearch {
     field: string;
@@ -44,11 +56,17 @@ export interface KeywordSearch {
         boost?: number;
         minimumShouldMatch?: string;
     };
+}
 
+export interface FieldFilter {
+  field: string;
+  operator?: FilterOperator;
+  value: unknown;
 }
 
 export interface SearchRequest {
     keywordSearches?: KeywordSearch[];
+    filters?: FieldFilter[];
 
     startTime?: Date;
     endTime?: Date;

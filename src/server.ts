@@ -4,12 +4,12 @@ import app from "./app.ts";
 async function bootstrap() {
 
   app.listen(3000, () => {
-    logger.info(
-      {
-        port: 3000,
-      },
-      "Server Started"
-    );
+    // logger.info(
+    //   {
+    //     port: 3000,
+    //   },
+    //   "Server Started"
+    // );
   });
 }
 

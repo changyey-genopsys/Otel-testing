@@ -1,6 +1,6 @@
 import * as esb from "elastic-builder";
-import { EcsFields, SearchFields, type KeywordSearch, type SearchRequest } from "./search.type.ts"
-
+import { EcsFields } from "./search.type.ts"
+import type { KeywordSearch, SearchRequest, FieldFilter } from "./search.type.ts"
 export class QueryBuilder {
 
     private buildCondition(condition: KeywordSearch): esb.Query {
@@ -43,7 +43,74 @@ export class QueryBuilder {
                     condition.keyword
                 );
         }
+    }
 
+    private addFilters(
+        boolQuery: esb.BoolQuery,
+        filters?: FieldFilter[]
+    ) {
+        if (!filters?.length) {
+            return;
+        }
+        for (const filter of filters) {
+            const operator = filter.operator ?? "eq";
+
+            switch (operator) {
+
+                case "eq":
+                    if (
+                        typeof filter.value === "string" ||
+                        typeof filter.value === "number" ||
+                        typeof filter.value === "boolean" ||
+                        filter.value === undefined
+                    )
+                        boolQuery.filter(esb.termQuery(filter.field, filter.value));
+                    break;
+
+                case "neq":
+                    if (
+                        typeof filter.value === "string" ||
+                        typeof filter.value === "number" ||
+                        typeof filter.value === "boolean" ||
+                        filter.value === undefined
+                    )
+                        boolQuery.mustNot(esb.termQuery(filter.field, filter.value));
+                    break;
+
+                case "gt":
+                case "gte":
+                case "lt":
+                case "lte":
+                    boolQuery.filter(esb.rangeQuery(filter.field)[operator](filter.value as any));
+                    break;
+
+                case "in":
+                    boolQuery.filter(
+                        esb.termsQuery(
+                            filter.field,
+                            filter.value as string[]
+                        )
+                    );
+                    break;
+
+                case "notIn":
+                    boolQuery.mustNot(
+                        esb.termsQuery(
+                            filter.field,
+                            filter.value as string[]
+                        )
+                    );
+                    break;
+
+                case "exists":
+                    boolQuery.filter(esb.existsQuery(filter.field));
+                    break;
+
+                case "notExists":
+                    boolQuery.mustNot(esb.existsQuery(filter.field));
+                    break;
+            }
+        }
     }
 
     public build(request: SearchRequest): object {
@@ -75,6 +142,14 @@ export class QueryBuilder {
             }
             bool.filter(range);
         }
+
+        //------------------------------------
+        // General filters
+        //------------------------------------
+        this.addFilters(
+            bool,
+            request.filters
+        );
 
         //------------------------------------
         // level !ECS
@@ -145,7 +220,8 @@ export class QueryBuilder {
         //------------------------------------
         // source
         //------------------------------------
-        body.source(request.fields ?? SearchFields.defaultSource);
+        if (request.fields)
+            body.source(request.fields);
 
         //------------------------------------
         // paging
