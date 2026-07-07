@@ -7,26 +7,37 @@ const app: Express = express();
 app.get("/health", async (_req, res) => {
   logger.info(
     {
-      module: "health",
+      "service.name": "health",
     },
     "Health Check"
   );
 
-  res.json({
-    status: "ok",
-  });
+  res.json({ status: "ok" });
+});
+
+app.get("/testrun", async (_req, res) => {
+
+  for (let index = 0; index < 5; index++) {
+    logger.info(
+      {
+        "service.name": "testrun",
+      },
+      "Test for test"
+    );
+  }
+  res.json({ status: "ok" });
 });
 
 
-import { Client } from "@elastic/elasticsearch";
+// import { Client } from "@elastic/elasticsearch";
 import { LogSearchService, } from "./search/elastic.search.ts"
 import { type SearchRequest } from "./search/search.type.ts"
 
-const DATA_STREAM = "logs-ts-app-default";
+const DATA_STREAM = process.env.SYSTEM_INDEX;
 
-export const elasticClient = new Client({
-  node: "http://elasticsearch:9200",
-});
+// export const elasticClient = new Client({
+//   node: `http://${process.env.ES_HOST}:${process.env.ES_PORT}`,
+// });
 
 
 
@@ -62,11 +73,9 @@ app.get("/search", async (_req, res) => {
 
   const result = await new LogSearchService().search(DATA_STREAM, options);
 
-  console.log(result);
+  console.log(result.hits);
   console.log(result.hits.hits);
-  res.json({
-    status: "ok",
-  });
+  res.json({ status: "ok" });
 });
 
 async function service(args: String) {

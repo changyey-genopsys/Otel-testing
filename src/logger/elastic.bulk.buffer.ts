@@ -1,6 +1,6 @@
 import { Client } from "@elastic/elasticsearch";
 
-export const DATA_STREAM = "logs-ts-app-default";
+// export const DATA_STREAM = "logs-ts-app-default";
 
 export class ElasticBulkBuffer {
     private readonly client: Client;
@@ -48,7 +48,7 @@ export class ElasticBulkBuffer {
             for (const log of logs) {
                 operations.push({
                     create: {
-                        _index: DATA_STREAM
+                        _index: this.index
                     }
                 });
                 operations.push(log);

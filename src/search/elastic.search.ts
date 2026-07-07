@@ -3,10 +3,10 @@ import { QueryBuilder } from "./query.builder.ts";
 import { type SearchRequest } from "./search.type.ts"
 
 const elasticClient = new Client({
-    node: "http://elasticsearch:9200",
+    node: `http://${process.env.ES_HOST}:${process.env.ES_PORT}`,
 });
 
-const DATA_STREAM = "logs-ts-app-default";
+const DATA_STREAM = process.env.SYSTEM_INDEX;
 
 export class LogSearchService {
     private readonly client: Client = elasticClient;
@@ -17,7 +17,7 @@ export class LogSearchService {
     }
 
     async search(
-        index: string = DATA_STREAM,
+        index: string = DATA_STREAM as string,
         request: SearchRequest
     ) {
         const body = this.queryBuilder.build(request);
