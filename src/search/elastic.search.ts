@@ -1,4 +1,4 @@
-import { Client } from "@elastic/elasticsearch";
+import { Client, estypes } from "@elastic/elasticsearch";
 import { QueryBuilder } from "./query.builder.ts";
 import { type SearchRequest } from "./search.type.ts"
 
@@ -21,7 +21,7 @@ export class LogSearchService {
         request: SearchRequest
     ) {
         const body = this.queryBuilder.build(request);
-        return this.client.search({
+        return this.client.search<estypes.SearchResponse>({
             index,
             body
         });

@@ -2,6 +2,8 @@ import express, { type Express } from 'express';
 
 import { createLogger } from "./logger/logger.ts";
 
+import { getLogByServiceAndLevel, getLogByTime } from "./search.service.ts"
+
 const app: Express = express();
 
 app.get("/health", async (_req, res) => {
@@ -57,22 +59,23 @@ app.get("/none", async (_req, res) => {
 
 
 app.get("/search", async (_req, res) => {
-  const options: SearchRequest = {
-    keywordSearches: [{
-      field: "msg",
-      keyword: "test",
-      searchMode: "fullText"
-    }],
-    filters: [{ field: "level", value: "30" }],
-    fields: ['@timestamp', "msg", "hostname"],
-    startTime: new Date('2026-07-06T00:00:00.000Z',),
-    endTime: new Date()
-  };
+  // const options: SearchRequest = {
+  //   keywordSearches: [{
+  //     field: "msg",
+  //     keyword: "test",
+  //     searchMode: "fullText"
+  //   }],
+  //   filters: [{ field: "level", value: "30" }],
+  //   fields: ['@timestamp', "msg", "hostname"],
+  //   startTime: new Date('2026-07-06T00:00:00.000Z',),
+  //   endTime: new Date()
+  // };
 
-  const result = await new LogSearchService().search("logs-*", options);
+  // const result = await new LogSearchService().search("logs-*", options);
+  const result = await getLogByTime("2026-07-07T04:00:00.000Z", "2026-07-07T14:00:00");
 
   // console.log(result.hits);
-  console.log(result.hits.hits);
+  console.log(result?.length);
   res.json({ status: "ok" });
 });
 

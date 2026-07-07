@@ -52,19 +52,8 @@ export class ElasticBulkBuffer {
             const operations = [];
 
             for (const log of logs) {
-                let index = DATASTREAM_MAPPING.system;
-
                 const serviceName = (log as Record<string, any>)['service.name'];
-                if (serviceName) {
-                    switch (serviceName) {
-                        case "testrun":
-                        case "controller":
-                            index = DATASTREAM_MAPPING.testrun;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                const index = this.getIndexByService(serviceName);
 
                 // console.log(index, serviceName, log);
 
@@ -80,6 +69,16 @@ export class ElasticBulkBuffer {
         finally {
             this.flushing = false;
         }
+    }
+
+    private getIndexByService(service: string): string {
+        if (service)
+            switch (service) {
+                case "testrun":
+                case "controller":
+                    return `${process.env.TEST_INDEX}`
+            }
+        return `${process.env.SYSTEM_INDEX}`
     }
 
     public async close() {
