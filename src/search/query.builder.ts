@@ -113,6 +113,9 @@ export class QueryBuilder {
         }
     }
 
+    /**
+     * build the search query body
+     */
     public build(request: SearchRequest): object {
         const bool = esb.boolQuery();
 
@@ -244,9 +247,7 @@ export class QueryBuilder {
         // total hits
         //------------------------------------
         body.trackTotalHits(true);
-        // console.log(body.toJSON().query)
-        // console.log(body.toJSON().query.bool.must)
-        console.log(body.query(bool).toJSON());
+        // console.log(body.query(bool).toJSON());
         return body.query(bool).toJSON();
     }
 }

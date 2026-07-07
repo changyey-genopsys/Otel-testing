@@ -1,10 +1,14 @@
 import express, { type Express } from 'express';
 
-import { logger } from "./logger/logger.ts";
+import { createLogger } from "./logger/logger.ts";
 
 const app: Express = express();
 
 app.get("/health", async (_req, res) => {
+  const logger = createLogger({
+    serviceName: "system",
+  });
+
   logger.info(
     {
       "service.name": "health",
@@ -16,6 +20,9 @@ app.get("/health", async (_req, res) => {
 });
 
 app.get("/testrun", async (_req, res) => {
+  const logger = createLogger({
+    serviceName: "testrun",
+  });
 
   for (let index = 0; index < 5; index++) {
     logger.info(
@@ -33,7 +40,7 @@ app.get("/testrun", async (_req, res) => {
 import { LogSearchService, } from "./search/elastic.search.ts"
 import { type SearchRequest } from "./search/search.type.ts"
 
-const DATA_STREAM = process.env.SYSTEM_INDEX;
+const DATA_STREAM = process.env.TEST_INDEX;//TEST_INDEX SYSTEM_INDEX
 
 // export const elasticClient = new Client({
 //   node: `http://${process.env.ES_HOST}:${process.env.ES_PORT}`,
@@ -41,28 +48,19 @@ const DATA_STREAM = process.env.SYSTEM_INDEX;
 
 
 
-// app.get("/searchtt", async (_req, res) => {
-//   const result = await elasticClient.search({
-//     index: DATA_STREAM,
-//     query: {
-//       match: {
-//         level: 30
-//       }
-//     }
-//   });
+app.get("/none", async (_req, res) => {
+  service("none test");
 
-//   console.log(result.hits.hits);
-//   res.json({
-//     status: "ok",
-//   });
-// });
+  res.json({ status: "ok" });
+});
+
 
 
 app.get("/search", async (_req, res) => {
   const options: SearchRequest = {
     keywordSearches: [{
       field: "msg",
-      keyword: "Server",
+      keyword: "test",
       searchMode: "fullText"
     }],
     filters: [{ field: "level", value: "30" }],
@@ -71,14 +69,17 @@ app.get("/search", async (_req, res) => {
     endTime: new Date()
   };
 
-  const result = await new LogSearchService().search(DATA_STREAM, options);
+  const result = await new LogSearchService().search("logs-*", options);
 
-  console.log(result.hits);
+  // console.log(result.hits);
   console.log(result.hits.hits);
   res.json({ status: "ok" });
 });
 
 async function service(args: String) {
+  const logger = createLogger({
+    serviceName: "none",
+  });
   logger.info(args);
 }
 

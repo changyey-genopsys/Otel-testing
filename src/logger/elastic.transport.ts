@@ -10,10 +10,12 @@ const DATA_STREAM = process.env.SYSTEM_INDEX;
 
 const buffer = new ElasticBulkBuffer({
   client: elasticClient,
-  index: DATA_STREAM as string
+  // index: DATA_STREAM as string
 });
 
-
+/**
+  * receive log from pino, add @timestamp and send to buffer
+*/
 export default async function () {
   return build(async (source) => {
 
