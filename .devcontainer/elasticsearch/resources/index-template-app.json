@@ -1,19 +1,19 @@
 {
   "index_patterns": [
-    "logs-*"
+    "logs-app-*"
   ],
 
-  "priority": 500,
+  "priority": 502,
 
   "data_stream": {},
 
   "composed_of": [
-    "logs-component"
+    "logs-component-app"
   ],
 
   "template": {
     "settings": {
-      "index.lifecycle.name": "logs-ilm"
+      "index.lifecycle.name": "logs-app-ilm"
     }
   }
 }

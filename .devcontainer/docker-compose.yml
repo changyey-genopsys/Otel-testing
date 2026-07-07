@@ -41,9 +41,15 @@ services:
   #     - dev_network
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:9.4.2
+    # image: docker.elastic.co/elasticsearch/elasticsearch:9.4.2
 
     container_name: elasticsearch
+
+    env_file:
+      - .env
+
+    build:
+      context: ./elasticsearch/
 
     # xpack.security.enabled=false only for develop
     environment:
@@ -56,7 +62,6 @@ services:
       - "${ES_PORT}:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
-      - ./init:/init
       
     networks:
       - dev_network
@@ -65,25 +70,25 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    command:
-      - bash
-      - -c
-      - |
-        /usr/local/bin/docker-entrypoint.sh eswrapper &
-        ES_PID=$!
+    # command:
+    #   - bash
+    #   - -c
+    #   - |
+    #     /usr/local/bin/docker-entrypoint.sh eswrapper &
+    #     ES_PID=$!
 
-        echo "Waiting Elasticsearch..."
+    #     echo "Waiting Elasticsearch..."
 
-        until curl -s http://localhost:9200 >/dev/null
-        do
-          sleep 2
-        done
+    #     until curl -s http://localhost:9200 >/dev/null
+    #     do
+    #       sleep 2
+    #     done
 
-        echo "Elasticsearch Ready"
+    #     echo "Elasticsearch Ready"
 
-        bash /init/init.sh
+    #     bash /init/init.sh
 
-        wait $$ES_PID
+    #     wait $$ES_PID
 
 
 

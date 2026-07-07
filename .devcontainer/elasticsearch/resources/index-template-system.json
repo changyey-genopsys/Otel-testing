@@ -1,0 +1,19 @@
+{
+  "index_patterns": [
+    "logs-system-*"
+  ],
+
+  "priority": 501,
+
+  "data_stream": {},
+
+  "composed_of": [
+    "logs-component-system"
+  ],
+
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "logs-system-ilm"
+    }
+  }
+}
