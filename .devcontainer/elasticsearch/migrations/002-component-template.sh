@@ -3,11 +3,11 @@
 source /opt/init/common.sh
 
 put_component_template \
-    logs-component-app \
+    ${TEST_COMPONENT_TEMPLATE} \
     /opt/init/resources/component-template-app.json
 
 put_component_template \
-    logs-component-system \
+    ${SYSTEM_COMPONENT_TEMPLATE} \
     /opt/init/resources/component-template-system.json
 
 # put_component_template \

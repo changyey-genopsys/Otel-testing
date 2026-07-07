@@ -3,11 +3,11 @@
 source /opt/init/common.sh
 
 put_ilm \
-    logs-app-ilm \
+    ${TEST_ILM} \
     /opt/init/resources/ilm-policy-app.json
 
 put_ilm \
-    logs-system-ilm \
+    ${SYSTEM_ILM} \
     /opt/init/resources/ilm-policy-system.json
 
 # put_ilm \
